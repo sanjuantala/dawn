@@ -30,7 +30,7 @@
                 {% case filter.type %}
                 {% when 'list' %}
                   <details id="Details-{{ forloop.index }}-{{ section.id }}" class="disclosure-has-popup facets__disclosure js-filter" data-index="{{ forloop.index }}">
-                    <summary class="facets__summary caption-large focus-offset" role="button" aria-expanded="false" aria-controls="Facet-{{ forloop.index }}-{{ section.id }}">
+                    <summary class="facets__summary caption-large focus-offset">
                       <div>
                         <span>{{ filter.label | escape }}</span>
                         {% render 'icon-caret' %}
@@ -93,7 +93,7 @@
                     endif
                   %}
                   <details id="Details-{{ forloop.index }}-{{ section.id }}" class="disclosure-has-popup facets__disclosure js-filter" data-index="{{ forloop.index }}">
-                    <summary class="facets__summary caption-large focus-offset" role="button" aria-expanded="false" aria-controls="Facet-{{ forloop.index }}-{{ section.id }}">
+                    <summary class="facets__summary caption-large focus-offset">
                       <div>
                         <span>{{ filter.label | escape }}</span>
                         {% render 'icon-caret' %}
@@ -255,7 +255,7 @@
                   {% case filter.type %}
                   {% when 'list' %}
                     <details id="Details-Mobile-{{ forloop.index }}-{{ section.id }}" class="mobile-facets__details js-filter" data-index="mobile-{{ forloop.index }}">
-                      <summary class="mobile-facets__summary focus-inset" role="button" aria-expanded="false" aria-controls="FacetMobile-{{ forloop.index }}-{{ section.id }}">
+                      <summary class="mobile-facets__summary focus-inset">
                         <div>
                           <span>{{ filter.label | escape }}</span>                        
                           <span class="mobile-facets__arrow no-js-hidden">{% render 'icon-arrow' %}</span>
@@ -303,7 +303,7 @@
                     </details>
                   {% when 'price_range' %}
                     <details id="Details-Mobile-{{ forloop.index }}-{{ section.id }}" class="mobile-facets__details js-filter" data-index="mobile-{{ forloop.index }}">
-                      <summary class="mobile-facets__summary focus-inset" role="button" aria-expanded="false" aria-controls="FacetMobile-{{ forloop.index }}-{{ section.id }}">
+                      <summary class="mobile-facets__summary focus-inset">
                         <div>
                           <span>{{ filter.label | escape }}</span>
                           <span class="mobile-facets__arrow no-js-hidden">{% render 'icon-arrow' %}</span>
