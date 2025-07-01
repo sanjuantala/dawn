@@ -1,0 +1,13 @@
+{%- assign selected_variant = product.selected_or_first_available_variant -%}
+<div class="bundle-product-card">
+  <h3>{{ product.title }}</h3>
+  <span>{{ product.price | money }}</span>
+  <product-form>
+    <form method="post" action="/cart/add" data-type="add-to-cart-form" class="bundle-form">
+      <input type="hidden" name="id" value="{{ selected_variant.id }}">
+      <input type="hidden" name="quantity" value="1">
+      <input type="hidden" name="properties[added_from]" value="bundle">
+      <button type="submit" class="button">Add to cart</button>
+    </form>
+  </product-form>
+</div>
