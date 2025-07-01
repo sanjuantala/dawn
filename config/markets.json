@@ -8,16 +8,5 @@
  * ------------------------------------------------------------
  */
 {
-  "sections": {
-    "main": {
-      "type": "bundle-products",
-      "settings": {
-        "collection": "adidas",
-        "products_to_show": 4
-      }
-    }
-  },
-  "order": [
-    "main"
-  ]
+  "markets": {}
 }
