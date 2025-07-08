@@ -194,15 +194,24 @@
                       <fieldset class="js product-form__input">
                         <legend class="form__label">{{ option.name }}</legend>
                         {%- for value in option.values -%}
-                          <input type="radio" id="{{ section.id }}-{{ option.name }}-{{ forloop.index0 }}"
-                                name="{{ option.name }}"
-                                value="{{ value | escape }}"
-                                form="product-form-{{ section.id }}"
-                                {% if option.selected_value == value %}checked{% endif %}
-                          >
-                          <label for="{{ section.id }}-{{ option.name }}-{{ forloop.index0 }}">
-                            {{ value }}
-                          </label>
+                          {%- assign value_available = false -%}
+                          {%- for variant in product.variants -%}
+                            {%- if variant.available and variant.options[forloop.parentloop.index0] == value -%}
+                              {%- assign value_available = true -%}
+                              {%- break -%}
+                            {%- endif -%}
+                          {%- endfor -%}
+                          {%- if value_available -%}
+                            <input type="radio" id="{{ section.id }}-{{ option.name }}-{{ forloop.index0 }}"
+                                  name="{{ option.name }}"
+                                  value="{{ value | escape }}"
+                                  form="product-form-{{ section.id }}"
+                                  {% if option.selected_value == value %}checked{% endif %}
+                            >
+                            <label for="{{ section.id }}-{{ option.name }}-{{ forloop.index0 }}">
+                              {{ value }}
+                            </label>
+                          {%- endif -%}
                         {%- endfor -%}
                       </fieldset>
                   {%- endfor -%}
@@ -224,9 +233,18 @@
                           form="product-form-{{ section.id }}"
                         >
                           {%- for value in option.values -%}
-                            <option value="{{ value | escape }}" {% if option.selected_value == value %}selected="selected"{% endif %}>
-                              {{ value }}
-                            </option>
+                            {%- assign value_available = false -%}
+                            {%- for variant in product.variants -%}
+                              {%- if variant.available and variant.options[forloop.parentloop.index0] == value -%}
+                                {%- assign value_available = true -%}
+                                {%- break -%}
+                              {%- endif -%}
+                            {%- endfor -%}
+                            {%- if value_available -%}
+                              <option value="{{ value | escape }}" {% if option.selected_value == value %}selected="selected"{% endif %}>
+                                {{ value }}
+                              </option>
+                            {%- endif -%}
                           {%- endfor -%}
                         </select>
                         {% render 'icon-caret' %}
