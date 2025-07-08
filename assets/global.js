@@ -566,10 +566,17 @@ class VariantSelects extends HTMLElement {
   constructor() {
     super();
     this.addEventListener('change', this.onVariantChange);
+    this.hideOutOfStockOptions = this.hideOutOfStockOptions.bind(this);
+  }
+
+  connectedCallback() {
+    this.updateOptions();
+    this.hideOutOfStockOptions();
   }
 
   onVariantChange() {
     this.updateOptions();
+    this.hideOutOfStockOptions();
     this.updateMasterId();
     this.toggleAddButton(true, '', false);
     this.updatePickupAvailability();
@@ -696,6 +703,47 @@ class VariantSelects extends HTMLElement {
     if (!addButton) return;
     addButton.textContent = window.variantStrings.unavailable;
     if (price) price.classList.add('visibility-hidden');
+  }
+
+  hideOutOfStockOptions() {
+    const variantData = this.getVariantData();
+    if (!variantData) return;
+    const selects = Array.from(this.querySelectorAll('select'));
+    selects.forEach((select, index) => {
+      const availableValues = variantData
+        .filter((variant) => {
+          if (!variant.available) return false;
+          return this.options.every((option, i) => {
+            if (i === index) return true;
+            return option === variant.options[i];
+          });
+        })
+        .map((variant) => variant.options[index]);
+
+      Array.from(select.options).forEach((option) => {
+        option.hidden = availableValues.indexOf(option.value) === -1;
+      });
+    });
+
+    const fieldsets = Array.from(this.querySelectorAll('fieldset'));
+    fieldsets.forEach((fieldset, index) => {
+      const availableValues = variantData
+        .filter((variant) => {
+          if (!variant.available) return false;
+          return this.options.every((option, i) => {
+            if (i === index) return true;
+            return option === variant.options[i];
+          });
+        })
+        .map((variant) => variant.options[index]);
+
+      Array.from(fieldset.querySelectorAll('input')).forEach((input) => {
+        const hide = availableValues.indexOf(input.value) === -1;
+        input.hidden = hide;
+        const label = fieldset.querySelector(`label[for="${input.id}"]`);
+        if (label) label.hidden = hide;
+      });
+    });
   }
 
   getVariantData() {
