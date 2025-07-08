@@ -711,13 +711,7 @@ class VariantSelects extends HTMLElement {
     const selects = Array.from(this.querySelectorAll('select'));
     selects.forEach((select, index) => {
       const availableValues = variantData
-        .filter((variant) => {
-          if (!variant.available) return false;
-          return this.options.every((option, i) => {
-            if (i === index) return true;
-            return option === variant.options[i];
-          });
-        })
+        .filter((variant) => variant.available)
         .map((variant) => variant.options[index]);
 
       Array.from(select.options).forEach((option) => {
@@ -728,13 +722,7 @@ class VariantSelects extends HTMLElement {
     const fieldsets = Array.from(this.querySelectorAll('fieldset'));
     fieldsets.forEach((fieldset, index) => {
       const availableValues = variantData
-        .filter((variant) => {
-          if (!variant.available) return false;
-          return this.options.every((option, i) => {
-            if (i === index) return true;
-            return option === variant.options[i];
-          });
-        })
+        .filter((variant) => variant.available)
         .map((variant) => variant.options[index]);
 
       Array.from(fieldset.querySelectorAll('input')).forEach((input) => {
