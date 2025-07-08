@@ -705,7 +705,7 @@ class VariantSelects extends HTMLElement {
     if (price) price.classList.add('visibility-hidden');
   }
 
-  hideOutOfStockOptions() {
+ hideOutOfStockOptions() {
     const variantData = this.getVariantData();
     if (!variantData) return;
     const selects = Array.from(this.querySelectorAll('select'));
@@ -733,6 +733,7 @@ class VariantSelects extends HTMLElement {
       });
     });
   }
+
 
   getVariantData() {
     this.variantData = this.variantData || JSON.parse(this.querySelector('[type="application/json"]').textContent);
