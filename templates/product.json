@@ -78,6 +78,14 @@
         "enable_video_looping": false
       }
     },
+    "bundle_products_P9ajew": {
+      "type": "bundle-products",
+      "name": "Bundle products",
+      "settings": {
+        "collection": "",
+        "products_to_show": 4
+      }
+    },
     "product-recommendations": {
       "type": "product-recommendations",
       "settings": {
@@ -90,18 +98,18 @@
         "show_rating": false
       }
     },
-    "bundle_products_P9ajew": {
-      "type": "bundle-products",
-      "name": "Bundle products",
+    "custom_liquid_XngHAg": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
       "settings": {
-        "collection": "",
-        "products_to_show": 4
+        "custom_liquid": "123\n\n{% comment %}\n  Renders bundle composition for a bundled product.\n  Works when the current product's selected variant has \"components\".\n{% endcomment %}\n\n{% assign bundle_variant = product.selected_or_first_available_variant %}\n\n{% if bundle_variant and bundle_variant.components and bundle_variant.components.size > 0 %}\n  <section class=\"bundle-components\">\n    <h3>What’s inside {{ product.title }}</h3>\n    <ul role=\"list\" class=\"bundle-components__list\">\n      {% for comp in bundle_variant.components %}\n        {%- assign child_variant = comp.product_variant | default: comp.variant -%} {# support either key #}\n        <li class=\"bundle-components__item\">\n          <a href=\"{{ child_variant.product.url }}\">\n            {{ child_variant.product.title }}\n          </a>\n          {% if child_variant.title and child_variant.title != 'Default Title' %}\n            — {{ child_variant.title }}\n          {% endif %}\n          × {{ comp.quantity }}\n        </li>\n      {% endfor %}\n    </ul>\n  </section>\n{% endif %}"
       }
     }
   },
   "order": [
     "main",
     "bundle_products_P9ajew",
-    "product-recommendations"
+    "product-recommendations",
+    "custom_liquid_XngHAg"
   ]
 }
