@@ -63,7 +63,7 @@
         "custom_liquid_3AyeR3": {
           "type": "custom_liquid",
           "settings": {
-            "custom_liquid": "{% comment %}\n  Renders bundle composition for a bundled product.\n  Works when the current product's selected variant has \"components\".\n{% endcomment %}\n\n{% assign bundle_variant = product.selected_or_first_available_variant %}\n\n{% if bundle_variant and bundle_variant.components and bundle_variant.components.size > 0 %}\n  <section class=\"bundle-components\">\n    <h3>What’s inside {{ product.title }}</h3>\n    <ul role=\"list\" class=\"bundle-components__list\">\n      {% for comp in bundle_variant.components %}\n        {%- assign child_variant = comp.product_variant | default: comp.variant -%} {# support either key #}\n        <li class=\"bundle-components__item\">\n          <a href=\"{{ child_variant.product.url }}\">\n            {{ child_variant.product.title }}\n          </a>\n          {% if child_variant.title and child_variant.title != 'Default Title' %}\n            — {{ child_variant.title }}\n          {% endif %}\n          × {{ comp.quantity }}\n        </li>\n      {% endfor %}\n    </ul>\n  </section>\n{% endif %}"
+            "custom_liquid": "{% comment %}\n  Example when components are stored in a JSON metafield like:\n  product.metafields.shopify_bundles.components (array of items with variant_id, qty, title/handle)\n{% endcomment %}\n{% assign raw = product.metafields.shopify_bundles.components | default: product.metafields.custom.bundle | json %}\n{% if raw %}\n  {% assign items = raw | parse_json %}\n  {% if items and items.size > 0 %}\n    <section class=\"bundle-components\">\n      <h3>What’s inside {{ product.title }}</h3>\n      <ul role=\"list\" class=\"bundle-components__list\">\n        {% for item in items %}\n          <li class=\"bundle-components__item\">\n            {% if item.handle %}\n              <a href=\"{{ routes.root_url }}products/{{ item.handle }}\">{{ item.title }}</a>\n            {% else %}\n              {{ item.title }}\n            {% endif %}\n            {% if item.variant_title and item.variant_title != 'Default Title' %}\n              — {{ item.variant_title }}\n            {% endif %}\n            × {{ item.quantity | default: 1 }}\n          </li>\n        {% endfor %}\n      </ul>\n    </section>\n  {% endif %}\n{% endif %}"
           }
         }
       },
@@ -97,18 +97,10 @@
         "show_vendor": false,
         "show_rating": false
       }
-    },
-    "custom_liquid_XngHAg": {
-      "type": "custom-liquid",
-      "name": "t:sections.custom-liquid.presets.name",
-      "settings": {
-        "custom_liquid": "123\n\n{% comment %}\n  Renders bundle composition for a bundled product.\n  Works when the current product's selected variant has \"components\".\n{% endcomment %}\n\n{% assign bundle_variant = product.selected_or_first_available_variant %}\n\n{% if bundle_variant and bundle_variant.components and bundle_variant.components.size > 0 %}\n  <section class=\"bundle-components\">\n    <h3>What’s inside {{ product.title }}</h3>\n    <ul role=\"list\" class=\"bundle-components__list\">\n      {% for comp in bundle_variant.components %}\n        {%- assign child_variant = comp.product_variant | default: comp.variant -%} {# support either key #}\n        <li class=\"bundle-components__item\">\n          <a href=\"{{ child_variant.product.url }}\">\n            {{ child_variant.product.title }}\n          </a>\n          {% if child_variant.title and child_variant.title != 'Default Title' %}\n            — {{ child_variant.title }}\n          {% endif %}\n          × {{ comp.quantity }}\n        </li>\n      {% endfor %}\n    </ul>\n  </section>\n{% endif %}"
-      }
     }
   },
   "order": [
     "main",
-    "product-recommendations",
-    "custom_liquid_XngHAg"
+    "product-recommendations"
   ]
 }
