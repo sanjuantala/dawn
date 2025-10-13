@@ -63,7 +63,7 @@
         "custom_liquid_3AyeR3": {
           "type": "custom_liquid",
           "settings": {
-            "custom_liquid": "{% comment %}\n  Example when components are stored in a JSON metafield like:\n  product.metafields.shopify_bundles.components (array of items with variant_id, qty, title/handle)\n{% endcomment %}\n{% assign raw = product.metafields.shopify_bundles.components | default: product.metafields.custom.bundle | json %}\n{% if raw %}\n  {% assign items = raw | parse_json %}\n  {% if items and items.size > 0 %}\n    <section class=\"bundle-components\">\n      <h3>What’s inside {{ product.title }}</h3>\n      <ul role=\"list\" class=\"bundle-components__list\">\n        {% for item in items %}\n          <li class=\"bundle-components__item\">\n            {% if item.handle %}\n              <a href=\"{{ routes.root_url }}products/{{ item.handle }}\">{{ item.title }}</a>\n            {% else %}\n              {{ item.title }}\n            {% endif %}\n            {% if item.variant_title and item.variant_title != 'Default Title' %}\n              — {{ item.variant_title }}\n            {% endif %}\n            × {{ item.quantity | default: 1 }}\n          </li>\n        {% endfor %}\n      </ul>\n    </section>\n  {% endif %}\n{% endif %}"
+            "custom_liquid": "{%- assign v = product.selected_or_first_available_variant -%}\n<div id=\"bundle-components\"\n     data-variant-gid=\"{{ v.admin_graphql_api_id | escape }}\"\n     data-product-title=\"{{ product.title | escape }}\">\n  <!-- Bundle contents will render here -->\n</div>"
           }
         }
       },
