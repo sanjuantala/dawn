@@ -185,6 +185,47 @@
         "button_link": "",
         "swipe_on_mobile": false
       }
+    },
+    "17679442907dd81e0f": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_65a1d60_cPYCPE": {
+          "type": "ai_gen_block_65a1d60",
+          "settings": {
+            "collection": "sale",
+            "products_limit": 41,
+            "show_sold_out": true,
+            "card_min_width": 250,
+            "grid_gap": 20,
+            "columns_mobile": "2",
+            "image_aspect_ratio": 100,
+            "card_background": "#FFFFFF",
+            "card_border_color": "#E5E5E5",
+            "card_border_radius": 8,
+            "card_padding": 16,
+            "image_background": "#F3F3F3",
+            "show_vendor": false,
+            "vendor_text_color": "#666666",
+            "title_font_size": 16,
+            "title_color": "#121212",
+            "variant_font_size": 14,
+            "variant_text_color": "#666666",
+            "price_font_size": 16,
+            "price_color": "#121212",
+            "compare_price_color": "#999999",
+            "show_badges": true,
+            "sale_badge_color": "#334FB4",
+            "sale_badge_text_color": "#FFFFFF",
+            "sold_out_badge_color": "#121212",
+            "sold_out_badge_text_color": "#FFFFFF"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_65a1d60_cPYCPE"
+      ],
+      "settings": {}
     }
   },
   "order": [
@@ -193,6 +234,7 @@
     "featured_products",
     "collage",
     "video",
-    "multi_column"
+    "multi_column",
+    "17679442907dd81e0f"
   ]
 }
