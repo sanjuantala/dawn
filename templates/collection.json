@@ -1,14 +1,82 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "banner": {
-      "type": "main-collection-banner"
+      "type": "main-collection-banner",
+      "settings": {
+        "show_collection_description": true,
+        "show_collection_image": false
+      }
     },
     "product-grid": {
-      "type": "main-collection-product-grid"
+      "type": "main-collection-product-grid",
+      "settings": {
+        "products_per_page": 16,
+        "image_ratio": "adapt",
+        "show_secondary_image": false,
+        "add_image_padding": false,
+        "show_image_outline": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "enable_filtering": true,
+        "enable_sorting": true,
+        "collapse_on_larger_devices": false
+      }
+    },
+    "blocks_7RdbXz": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_65a1d60_zPDx3i": {
+          "type": "ai_gen_block_65a1d60",
+          "settings": {
+            "collection": "sale",
+            "products_limit": 12,
+            "show_sold_out": true,
+            "card_min_width": 250,
+            "grid_gap": 20,
+            "columns_mobile": "2",
+            "image_aspect_ratio": 100,
+            "card_background": "#FFFFFF",
+            "card_border_color": "#E5E5E5",
+            "card_border_radius": 8,
+            "card_padding": 16,
+            "image_background": "#F3F3F3",
+            "show_vendor": false,
+            "vendor_text_color": "#666666",
+            "title_font_size": 16,
+            "title_color": "#121212",
+            "variant_font_size": 14,
+            "variant_text_color": "#666666",
+            "price_font_size": 16,
+            "price_color": "#121212",
+            "compare_price_color": "#999999",
+            "show_badges": true,
+            "sale_badge_color": "#334FB4",
+            "sale_badge_text_color": "#FFFFFF",
+            "sold_out_badge_color": "#121212",
+            "sold_out_badge_text_color": "#FFFFFF"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_65a1d60_zPDx3i"
+      ],
+      "name": "Variant product cards",
+      "settings": {}
     }
   },
   "order": [
     "banner",
-    "product-grid"
+    "product-grid",
+    "blocks_7RdbXz"
   ]
 }
