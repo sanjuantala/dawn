@@ -31,6 +31,26 @@
         "collapse_on_larger_devices": false
       }
     },
+    "rich_text_ACjLDp": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_bRXWt3": {
+          "type": "heading",
+          "settings": {
+            "heading": "Variant Product",
+            "heading_size": "h1"
+          }
+        }
+      },
+      "block_order": [
+        "heading_bRXWt3"
+      ],
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "color_scheme": "background-1",
+        "full_width": true
+      }
+    },
     "blocks_7RdbXz": {
       "type": "_blocks",
       "blocks": {
@@ -77,6 +97,7 @@
   "order": [
     "banner",
     "product-grid",
+    "rich_text_ACjLDp",
     "blocks_7RdbXz"
   ]
 }
