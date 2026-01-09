@@ -1,6 +1,504 @@
+{% doc %}
+  @prompt
+    Create a custom product card section for collection pages that displays each product variant as a separate card. For example, if a product has 2 color variants (red and blue), show 2 separate cards on the collection page - one for the red variant and one for the blue variant. Each card should display the variant-specific image, title with the variant option (like "Product Name - Red"), and the variant's price. The cards should be visually consistent with standard product cards but clearly show the specific variant information.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-variant-cards-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+  }
+
+  .ai-variant-cards__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax({{ block.settings.card_min_width }}px, 1fr));
+    gap: {{ block.settings.grid_gap }}px;
+    width: 100%;
+  }
+
+  .ai-variant-card-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid {{ block.settings.card_border_color }};
+  }
+
+  .ai-variant-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-variant-card__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: {{ block.settings.image_aspect_ratio }}%;
+    overflow: hidden;
+    background-color: {{ block.settings.image_background }};
+  }
+
+  .ai-variant-card__image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-variant-card__placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: {{ block.settings.image_background }};
+  }
+
+  .ai-variant-card__placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-variant-card__badge-{{ ai_gen_id }} {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-variant-card__badge--sale-{{ ai_gen_id }} {
+    background-color: {{ block.settings.sale_badge_color }};
+    color: {{ block.settings.sale_badge_text_color }};
+  }
+
+  .ai-variant-card__badge--sold-out-{{ ai_gen_id }} {
+    background-color: {{ block.settings.sold_out_badge_color }};
+    color: {{ block.settings.sold_out_badge_text_color }};
+  }
+
+  .ai-variant-card__content-{{ ai_gen_id }} {
+    padding: {{ block.settings.card_padding }}px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ai-variant-card__vendor-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: {{ block.settings.vendor_text_color }};
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+  }
+
+  .ai-variant-card__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_font_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.title_color }};
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .ai-variant-card__variant-name-{{ ai_gen_id }} {
+    font-size: {{ block.settings.variant_font_size }}px;
+    color: {{ block.settings.variant_text_color }};
+    margin: 0;
+  }
+
+  .ai-variant-card__price-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .ai-variant-card__price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_font_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.price_color }};
+  }
+
+  .ai-variant-card__compare-price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_font_size | minus: 2 }}px;
+    color: {{ block.settings.compare_price_color }};
+    text-decoration: line-through;
+  }
+
+  .ai-variant-card__empty-state-{{ ai_gen_id }} {
+    padding: 40px 20px;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-variant-cards__grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_mobile }}, 1fr);
+      gap: {{ block.settings.grid_gap | times: 0.75 }}px;
+    }
+
+    .ai-variant-card__title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_font_size | times: 0.9 }}px;
+    }
+
+    .ai-variant-card__variant-name-{{ ai_gen_id }} {
+      font-size: {{ block.settings.variant_font_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<variant-product-cards-{{ ai_gen_id }}
+  class="ai-variant-cards-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  {% if block.settings.collection != blank %}
+    <div class="ai-variant-cards__grid-{{ ai_gen_id }}">
+      {% for product in block.settings.collection.products limit: block.settings.products_limit %}
+        {% if product.variants.size > 0 %}
+          {% for variant in product.variants %}
+            {% if variant.available or block.settings.show_sold_out %}
+              <a
+                href="{{ variant.url }}"
+                class="ai-variant-card-{{ ai_gen_id }}"
+              >
+                <div class="ai-variant-card__image-wrapper-{{ ai_gen_id }}">
+                  {% if variant.image %}
+                    <img
+                      src="{{ variant.image | image_url: width: 600 }}"
+                      alt="{{ variant.image.alt | escape }}"
+                      loading="lazy"
+                      width="600"
+                      height="{{ 600 | times: block.settings.image_aspect_ratio | divided_by: 100 }}"
+                      class="ai-variant-card__image-{{ ai_gen_id }}"
+                    >
+                  {% elsif product.featured_image %}
+                    <img
+                      src="{{ product.featured_image | image_url: width: 600 }}"
+                      alt="{{ product.featured_image.alt | escape }}"
+                      loading="lazy"
+                      width="600"
+                      height="{{ 600 | times: block.settings.image_aspect_ratio | divided_by: 100 }}"
+                      class="ai-variant-card__image-{{ ai_gen_id }}"
+                    >
+                  {% else %}
+                    <div class="ai-variant-card__placeholder-{{ ai_gen_id }}">
+                      {{ 'product-1' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+
+                  {% if block.settings.show_badges %}
+                    {% if variant.available == false %}
+                      <div class="ai-variant-card__badge-{{ ai_gen_id }} ai-variant-card__badge--sold-out-{{ ai_gen_id }}">
+                        Sold Out
+                      </div>
+                    {% elsif variant.compare_at_price > variant.price %}
+                      <div class="ai-variant-card__badge-{{ ai_gen_id }} ai-variant-card__badge--sale-{{ ai_gen_id }}">
+                        Sale
+                      </div>
+                    {% endif %}
+                  {% endif %}
+                </div>
+
+                <div class="ai-variant-card__content-{{ ai_gen_id }}">
+                  {% if block.settings.show_vendor and product.vendor != blank %}
+                    <p class="ai-variant-card__vendor-{{ ai_gen_id }}">{{ product.vendor }}</p>
+                  {% endif %}
+
+                  <h3 class="ai-variant-card__title-{{ ai_gen_id }}">
+                    {{ product.title }}
+                  </h3>
+
+                  {% if variant.title != 'Default Title' %}
+                    <p class="ai-variant-card__variant-name-{{ ai_gen_id }}">
+                      {{ variant.title }}
+                    </p>
+                  {% endif %}
+
+                  <div class="ai-variant-card__price-wrapper-{{ ai_gen_id }}">
+                    <span class="ai-variant-card__price-{{ ai_gen_id }}">
+                      {{ variant.price | money }}
+                    </span>
+                    {% if variant.compare_at_price > variant.price %}
+                      <span class="ai-variant-card__compare-price-{{ ai_gen_id }}">
+                        {{ variant.compare_at_price | money }}
+                      </span>
+                    {% endif %}
+                  </div>
+                </div>
+              </a>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="ai-variant-card__empty-state-{{ ai_gen_id }}">
+      Select a collection to display variant cards
+    </div>
+  {% endif %}
+</variant-product-cards-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class VariantProductCards{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.style.display = 'block';
+      }
+    }
+
+    customElements.define('variant-product-cards-{{ ai_gen_id }}', VariantProductCards{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Variant product cards",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Collection"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "min": 1,
+      "max": 50,
+      "step": 1,
+      "label": "Maximum products",
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sold_out",
+      "label": "Show sold out variants",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "card_min_width",
+      "min": 150,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "label": "Card minimum width",
+      "default": 250
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Grid gap",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "image_aspect_ratio",
+      "min": 50,
+      "max": 150,
+      "step": 5,
+      "unit": "%",
+      "label": "Image aspect ratio",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Border color",
+      "default": "#E5E5E5"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "image_background",
+      "label": "Image background",
+      "default": "#F3F3F3"
+    },
+    {
+      "type": "header",
+      "content": "Product information"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "vendor_text_color",
+      "label": "Vendor color",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Title size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "variant_font_size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Variant name size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "variant_text_color",
+      "label": "Variant name color",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "price_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Price size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "compare_price_color",
+      "label": "Compare price color",
+      "default": "#999999"
+    },
+    {
+      "type": "header",
+      "content": "Badges"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badges",
+      "label": "Show badges",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "sale_badge_color",
+      "label": "Sale badge background",
+      "default": "#334FB4"
+    },
+    {
+      "type": "color",
+      "id": "sale_badge_text_color",
+      "label": "Sale badge text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "sold_out_badge_color",
+      "label": "Sold out badge background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "sold_out_badge_text_color",
+      "label": "Sold out badge text",
+      "default": "#FFFFFF"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Variant product cards"
+    }
+  ]
+}
 {% endschema %}
